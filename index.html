@@ -1,9 +1,11 @@
 <!doctype html>
 <html lang="en">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PayRoll Management System</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <style>
     * {
@@ -17,18 +19,14 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    body {
-      box-sizing: border-box;
-    }
-
     .app-wrapper {
-      min-height: 100vh;
+      height: 100%;
       display: flex;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
     .login-container {
-      min-height: 100vh;
+      height: 100%;
       width: 100%;
       display: flex;
       align-items: center;
@@ -144,7 +142,7 @@
     }
 
     .dashboard-wrapper {
-      min-height: 100vh;
+      height: 100%;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -228,7 +226,6 @@
       flex: 1;
       overflow-y: auto;
       padding: 30px;
-      width: calc(100% - 250px);
     }
 
     .page {
@@ -338,7 +335,6 @@
       font-size: 28px;
       font-weight: 700;
       color: #333;
-      word-break: break-word;
     }
 
     .modal-overlay {
@@ -352,7 +348,6 @@
       z-index: 2000;
       align-items: center;
       justify-content: center;
-      padding: 20px;
     }
 
     .modal-overlay.active {
@@ -445,7 +440,6 @@
 
     .employee-info-item {
       color: #666;
-      word-break: break-word;
     }
 
     .employee-info-label {
@@ -472,7 +466,6 @@
       color: #333;
       border-bottom: 2px solid #e0e0e0;
       font-size: 13px;
-      white-space: nowrap;
     }
 
     td {
@@ -480,7 +473,6 @@
       border-bottom: 1px solid #e0e0e0;
       font-size: 13px;
       color: #666;
-      white-space: nowrap;
     }
 
     tr:hover {
@@ -550,8 +542,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
-      gap: 10px;
-      flex-wrap: wrap;
     }
 
     .attendance-card-name {
@@ -574,7 +564,6 @@
       align-items: center;
       padding: 12px 0;
       border-bottom: 1px solid #e0e0e0;
-      gap: 15px;
     }
 
     .detail-row:last-child {
@@ -590,7 +579,6 @@
       font-size: 16px;
       font-weight: 700;
       color: #667eea;
-      text-align: right;
     }
 
     .stat-box {
@@ -682,7 +670,6 @@
 
       .main-content {
         margin-left: 200px;
-        width: calc(100% - 200px);
         padding: 20px;
       }
 
@@ -706,10 +693,6 @@
         grid-template-columns: 1fr;
       }
 
-      .attendance-card-details {
-        grid-template-columns: 1fr;
-      }
-
       .modal {
         padding: 30px 20px;
       }
@@ -717,488 +700,480 @@
       .login-box {
         padding: 30px 20px;
       }
-
-      .user-info {
-        right: 15px;
-        top: 15px;
-        font-size: 12px;
-        padding: 10px 14px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
-      }
-
-      .dashboard-wrapper {
-        display: block;
-      }
-
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-
-      .user-info {
-        position: static;
-        margin: 20px;
-        width: auto;
-      }
-
-      .detail-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .detail-row-value {
-        text-align: left;
-      }
     }
   </style>
-</head>
-<body>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body>
   <div class="app-wrapper" id="app-wrapper">
-    <div id="login-page" class="login-container">
-      <div class="login-box">
-        <div class="login-title">💼 PayRoll</div>
-        <div class="login-subtitle">Management System</div>
-
-        <div class="login-tabs">
-          <button class="login-tab active" id="admin-tab" type="button" onclick="switchLoginTab('admin')">👨‍💼 Admin</button>
-          <button class="login-tab" id="employee-tab" type="button" onclick="switchLoginTab('employee')">👤 Employee</button>
-        </div>
-
-        <form id="admin-login-form" class="login-form active">
-          <div class="form-group">
-            <label>Admin Password</label>
-            <input type="password" id="admin-password" placeholder="Enter admin password" required>
-          </div>
-          <button type="submit" class="button">Login as Admin</button>
-        </form>
-
-        <form id="employee-login-form" class="login-form" style="display: none;">
-          <div class="form-group">
-            <label>Select Employee</label>
-            <select id="employee-select" required>
-              <option value="">-- Choose Employee --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Employee Password</label>
-            <input type="password" id="employee-password" placeholder="Enter password" required>
-          </div>
-          <button type="submit" class="button">Login as Employee</button>
-        </form>
+   <!-- Login Page -->
+   <div id="login-page" class="login-container">
+    <div class="login-box">
+     <div class="login-title">
+      💼 PayRoll
+     </div>
+     <div class="login-subtitle">
+      Management System
+     </div>
+     <div class="login-tabs">
+      <button class="login-tab active" id="admin-tab" onclick="switchLoginTab('admin')">👨‍💼 Admin</button> <button class="login-tab" id="employee-tab" onclick="switchLoginTab('employee')">👤 Employee</button>
+     </div><!-- Admin Login -->
+     <form id="admin-login-form" class="login-form active">
+      <div class="form-group">
+       <label>Admin Password</label> <input type="password" id="admin-password" placeholder="Enter admin password" required>
+      </div><button type="submit" class="button">Login as Admin</button>
+     </form><!-- Employee Login -->
+     <form id="employee-login-form" class="login-form" style="display: none;">
+      <div class="form-group">
+       <label>Select Employee</label> <select id="employee-select" required> <option value="">-- Choose Employee --</option> </select>
       </div>
+      <div class="form-group">
+       <label>Employee Name</label> <input type="text" id="employee-name" placeholder="Enter your name" required>
+      </div><button type="submit" class="button">Login as Employee</button>
+     </form>
     </div>
-
-    <div id="dashboard-page" class="dashboard-wrapper" style="display: none;">
-      <div class="sidebar">
-        <div class="logo">💼 PayRoll</div>
-        <ul class="nav-menu" id="nav-menu"></ul>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-      </div>
-
-      <div class="user-info">
-        <strong id="user-role-label">Admin</strong>
-        <span id="current-user">System Admin</span>
-      </div>
-
-      <div class="main-content">
-        <div id="admin-dashboard" class="page">
-          <div class="header">
-            <h1>📊 Admin Dashboard</h1>
-            <p>Manage your organization's payroll and attendance</p>
-          </div>
-
-          <div class="cards-grid">
-            <div class="card">
-              <div class="card-icon">👥</div>
-              <div class="card-title">Total Employees</div>
-              <div class="card-value" id="total-employees">0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">💵</div>
-              <div class="card-title">Total Payroll</div>
-              <div class="card-value" id="total-payroll">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">📊</div>
-              <div class="card-title">Total Deductions</div>
-              <div class="card-value" id="total-deductions">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">🏦</div>
-              <div class="card-title">Net Amount</div>
-              <div class="card-value" id="net-amount">₹0</div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>📋 Employee Summary</h2>
-            <div id="dashboard-empty" class="empty-state">
-              <div class="empty-state-icon">📝</div>
-              <div class="empty-state-text">No employees yet</div>
-            </div>
-            <div id="dashboard-table" style="display: none; overflow-x: auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Employee ID</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Gross Salary (Annual / Monthly)</th>
-                    <th>Deductions</th>
-                    <th>Net Salary</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="dashboard-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div id="admin-employees" class="page">
-          <div class="header">
-            <h1>👥 Employee Management</h1>
-            <p>Add and manage employee records</p>
-          </div>
-
-          <div class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 10px; flex-wrap: wrap;">
-              <h2 style="margin-bottom: 0;">Employee List</h2>
-              <button class="button button-small" onclick="openAddEmployeeModal()">+ Add Employee</button>
-            </div>
-
-            <div id="employees-empty" class="empty-state">
-              <div class="empty-state-icon">👤</div>
-              <div class="empty-state-text">No employees yet</div>
-            </div>
-            <div id="employees-list"></div>
-          </div>
-        </div>
-
-        <div id="admin-attendance" class="page">
-          <div class="header">
-            <h1>📅 Mark Attendance</h1>
-            <p>Track employee attendance and manage salary</p>
-          </div>
-
-          <div class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 10px; flex-wrap: wrap;">
-              <h2 style="margin-bottom: 0;">Mark Attendance & Salary</h2>
-              <button class="button button-small" onclick="openMarkAttendanceModal()">+ Mark Attendance</button>
-            </div>
-
-            <div id="attendance-empty" class="empty-state">
-              <div class="empty-state-icon">📭</div>
-              <div class="empty-state-text">No attendance records</div>
-            </div>
-            <div id="attendance-list"></div>
-          </div>
-
-          <div class="section">
-            <h2>📊 Attendance Summary</h2>
-            <div class="attendance-stats">
-              <div class="stat-box">
-                <div class="stat-label">Total Present</div>
-                <div class="stat-number" id="stat-present" style="color: #155724;">0</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-label">Total Absent</div>
-                <div class="stat-number" id="stat-absent" style="color: #721c24;">0</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-label">Total Leave</div>
-                <div class="stat-number" id="stat-leave" style="color: #856404;">0</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-label">Total Records</div>
-                <div class="stat-number" id="stat-total" style="color: #667eea;">0</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="admin-payroll" class="page">
-          <div class="header">
-            <h1>💰 Payroll Management</h1>
-            <p>Manage employee salaries and deductions</p>
-          </div>
-
-          <div class="cards-grid">
-            <div class="card">
-              <div class="card-icon">💸</div>
-              <div class="card-title">Total Gross</div>
-              <div class="card-value" id="payroll-gross">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">✂️</div>
-              <div class="card-title">Total Deductions</div>
-              <div class="card-value" id="payroll-deductions">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">🏦</div>
-              <div class="card-title">Net Payable</div>
-              <div class="card-value" id="payroll-net">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">👥</div>
-              <div class="card-title">Employees</div>
-              <div class="card-value" id="payroll-count">0</div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>💰 Detailed Breakdown</h2>
-            <div id="payroll-empty" class="empty-state">
-              <div class="empty-state-icon">📋</div>
-              <div class="empty-state-text">No payroll data</div>
-            </div>
-            <div id="payroll-table" style="display: none; overflow-x: auto;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Department</th>
-                    <th>Gross Salary (Annual / Monthly)</th>
-                    <th>Deductions</th>
-                    <th>Net Salary</th>
-                  </tr>
-                </thead>
-                <tbody id="payroll-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div id="employee-dashboard" class="page">
-          <div class="header">
-            <h1>👋 Welcome, <span id="emp-name-display">Employee</span>!</h1>
-            <p>Your personal payroll and attendance information</p>
-          </div>
-
-          <div class="cards-grid">
-            <div class="card">
-              <div class="card-icon">💵</div>
-              <div class="card-title">Gross Salary</div>
-              <div class="card-value" id="emp-gross-display">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">✂️</div>
-              <div class="card-title">Deductions</div>
-              <div class="card-value" id="emp-deductions-display">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">🏦</div>
-              <div class="card-title">Net Salary</div>
-              <div class="card-value" id="emp-net-display">₹0</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">📅</div>
-              <div class="card-title">Present Days</div>
-              <div class="card-value" id="emp-present-display">0</div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>📋 My Attendance Records (View Only)</h2>
-            <div id="emp-attendance-empty" class="empty-state">
-              <div class="empty-state-icon">📭</div>
-              <div class="empty-state-text">No attendance records</div>
-            </div>
-            <div id="emp-attendance-list"></div>
-          </div>
-
-          <div class="section">
-            <h2>📊 My Information</h2>
-            <div class="detail-row">
-              <span class="detail-row-label">Employee ID</span>
-              <span class="detail-row-value" id="emp-id-display">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-row-label">Department</span>
-              <span class="detail-row-value" id="emp-dept-display">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-row-label">Position</span>
-              <span class="detail-row-value" id="emp-pos-display">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-row-label">Status</span>
-              <span class="detail-row-value" id="emp-status-display">-</span>
-            </div>
-          </div>
-        </div>
-      </div>
+   </div><!-- Dashboard Wrapper -->
+   <div id="dashboard-page" class="dashboard-wrapper" style="display: none;">
+    <div class="sidebar">
+     <div class="logo">
+      💼 PayRoll
+     </div>
+     <ul class="nav-menu" id="nav-menu">
+      <!-- Nav items will be populated here -->
+     </ul><button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </div>
-  </div>
-
+    <div class="user-info">
+     <strong id="user-role-label">Admin</strong> <span id="current-user">System Admin</span>
+    </div>
+    <div class="main-content">
+     <!-- ADMIN PAGES --> <!-- Admin Dashboard -->
+     <div id="admin-dashboard" class="page">
+      <div class="header">
+       <h1>📊 Admin Dashboard</h1>
+       <p>Manage your organization's payroll and attendance</p>
+      </div>
+      <div class="cards-grid">
+       <div class="card">
+        <div class="card-icon">
+         👥
+        </div>
+        <div class="card-title">
+         Total Employees
+        </div>
+        <div class="card-value" id="total-employees">
+         0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         💵
+        </div>
+        <div class="card-title">
+         Total Payroll
+        </div>
+        <div class="card-value" id="total-payroll">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         📊
+        </div>
+        <div class="card-title">
+         Total Deductions
+        </div>
+        <div class="card-value" id="total-deductions">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         🏦
+        </div>
+        <div class="card-title">
+         Net Amount
+        </div>
+        <div class="card-value" id="net-amount">
+         ₹0
+        </div>
+       </div>
+      </div>
+      <div class="section">
+       <h2>📋 Employee Summary</h2>
+       <div id="dashboard-empty" class="empty-state">
+        <div class="empty-state-icon">
+         📝
+        </div>
+        <div class="empty-state-text">
+         No employees yet
+        </div>
+       </div>
+       <div id="dashboard-table" style="display: none; overflow-x: auto;">
+        <table>
+         <thead>
+          <tr>
+           <th>Employee ID</th>
+           <th>Name</th>
+           <th>Department</th>
+           <th>Position</th>
+           <th>Gross Salary (Annual / Monthly)</th>
+           <th>Deductions</th>
+           <th>Net Salary</th>
+           <th>Status</th>
+          </tr>
+         </thead>
+         <tbody id="dashboard-tbody">
+         </tbody>
+        </table>
+       </div>
+      </div>
+     </div><!-- Admin Employees -->
+     <div id="admin-employees" class="page">
+      <div class="header">
+       <h1>👥 Employee Management</h1>
+       <p>Add and manage employee records</p>
+      </div>
+      <div class="section">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="margin-bottom: 0;">Employee List</h2><button class="button button-small" onclick="openAddEmployeeModal()">+ Add Employee</button>
+       </div>
+       <div id="employees-empty" class="empty-state">
+        <div class="empty-state-icon">
+         👤
+        </div>
+        <div class="empty-state-text">
+         No employees yet
+        </div>
+       </div>
+       <div id="employees-list"></div>
+      </div>
+     </div><!-- Admin Attendance -->
+     <div id="admin-attendance" class="page">
+      <div class="header">
+       <h1>📅 Mark Attendance</h1>
+       <p>Track employee attendance and manage salary</p>
+      </div>
+      <div class="section">
+       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="margin-bottom: 0;">Mark Attendance &amp; Salary</h2><button class="button button-small" onclick="openMarkAttendanceModal()">+ Mark Attendance</button>
+       </div>
+       <div id="attendance-empty" class="empty-state">
+        <div class="empty-state-icon">
+         📭
+        </div>
+        <div class="empty-state-text">
+         No attendance records
+        </div>
+       </div>
+       <div id="attendance-list"></div>
+      </div>
+      <div class="section">
+       <h2>📊 Attendance Summary</h2>
+       <div class="attendance-stats">
+        <div class="stat-box">
+         <div class="stat-label">
+          Total Present
+         </div>
+         <div class="stat-number" id="stat-present" style="color: #155724;">
+          0
+         </div>
+        </div>
+        <div class="stat-box">
+         <div class="stat-label">
+          Total Absent
+         </div>
+         <div class="stat-number" id="stat-absent" style="color: #721c24;">
+          0
+         </div>
+        </div>
+        <div class="stat-box">
+         <div class="stat-label">
+          Total Leave
+         </div>
+         <div class="stat-number" id="stat-leave" style="color: #856404;">
+          0
+         </div>
+        </div>
+        <div class="stat-box">
+         <div class="stat-label">
+          Total Records
+         </div>
+         <div class="stat-number" id="stat-total" style="color: #667eea;">
+          0
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Admin Payroll -->
+     <div id="admin-payroll" class="page">
+      <div class="header">
+       <h1>💰 Payroll Management</h1>
+       <p>Manage employee salaries and deductions</p>
+      </div>
+      <div class="cards-grid">
+       <div class="card">
+        <div class="card-icon">
+         💸
+        </div>
+        <div class="card-title">
+         Total Gross
+        </div>
+        <div class="card-value" id="payroll-gross">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         ✂️
+        </div>
+        <div class="card-title">
+         Total Deductions
+        </div>
+        <div class="card-value" id="payroll-deductions">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         🏦
+        </div>
+        <div class="card-title">
+         Net Payable
+        </div>
+        <div class="card-value" id="payroll-net">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         👥
+        </div>
+        <div class="card-title">
+         Employees
+        </div>
+        <div class="card-value" id="payroll-count">
+         0
+        </div>
+       </div>
+      </div>
+      <div class="section">
+       <h2>💰 Detailed Breakdown</h2>
+       <div id="payroll-empty" class="empty-state">
+        <div class="empty-state-icon">
+         📋
+        </div>
+        <div class="empty-state-text">
+         No payroll data
+        </div>
+       </div>
+       <div id="payroll-table" style="display: none; overflow-x: auto;">
+        <table>
+         <thead>
+          <tr>
+           <th>Employee</th>
+           <th>Department</th>
+           <th>Gross Salary (Annual / Monthly)</th>
+           <th>Deductions</th>
+           <th>Net Salary</th>
+          </tr>
+         </thead>
+         <tbody id="payroll-tbody">
+         </tbody>
+        </table>
+       </div>
+      </div>
+     </div><!-- EMPLOYEE PAGES --> <!-- Employee Dashboard -->
+     <div id="employee-dashboard" class="page">
+      <div class="header">
+       <h1>👋 Welcome, <span id="emp-name-display">Employee</span>!</h1>
+       <p>Your personal payroll and attendance information</p>
+      </div>
+      <div class="cards-grid">
+       <div class="card">
+        <div class="card-icon">
+         💵
+        </div>
+        <div class="card-title">
+         Gross Salary
+        </div>
+        <div class="card-value" id="emp-gross-display">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         ✂️
+        </div>
+        <div class="card-title">
+         Deductions
+        </div>
+        <div class="card-value" id="emp-deductions-display">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         🏦
+        </div>
+        <div class="card-title">
+         Net Salary
+        </div>
+        <div class="card-value" id="emp-net-display">
+         ₹0
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-icon">
+         📅
+        </div>
+        <div class="card-title">
+         Present Days
+        </div>
+        <div class="card-value" id="emp-present-display">
+         0
+        </div>
+       </div>
+      </div>
+      <div class="section">
+       <h2>📋 My Attendance Records (View Only)</h2>
+       <div id="emp-attendance-empty" class="empty-state">
+        <div class="empty-state-icon">
+         📭
+        </div>
+        <div class="empty-state-text">
+         No attendance records
+        </div>
+       </div>
+       <div id="emp-attendance-list"></div>
+      </div>
+      <div class="section">
+       <h2>📊 My Information</h2>
+       <div class="detail-row">
+        <span class="detail-row-label">Employee ID</span> <span class="detail-row-value" id="emp-id-display">-</span>
+       </div>
+       <div class="detail-row">
+        <span class="detail-row-label">Department</span> <span class="detail-row-value" id="emp-dept-display">-</span>
+       </div>
+       <div class="detail-row">
+        <span class="detail-row-label">Position</span> <span class="detail-row-value" id="emp-pos-display">-</span>
+       </div>
+       <div class="detail-row">
+        <span class="detail-row-label">Status</span> <span class="detail-row-value" id="emp-status-display">-</span>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Add/Edit Employee Modal -->
   <div class="modal-overlay" id="employee-modal">
-    <div class="modal">
-      <h3 id="employee-modal-title">Add Employee</h3>
-      <form id="employee-form">
-        <div class="form-grid">
-          <div class="form-group form-grid-full">
-            <label>Employee ID</label>
-            <input type="text" id="form-emp-id" placeholder="e.g., EMP001" required>
-          </div>
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="form-emp-name" placeholder="Enter name" required>
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" id="form-emp-email" placeholder="Enter email" required>
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input type="tel" id="form-emp-phone" placeholder="Enter phone" required>
-          </div>
-          <div class="form-group">
-            <label>Department</label>
-            <input type="text" id="form-emp-dept" placeholder="e.g., Engineering" required>
-          </div>
-          <div class="form-group">
-            <label>Position</label>
-            <input type="text" id="form-emp-pos" placeholder="e.g., Developer" required>
-          </div>
-          <div class="form-group">
-            <label>Gross Salary</label>
-            <input type="number" id="form-emp-gross" placeholder="0" step="0.01" required>
-          </div>
-          <div class="form-group">
-            <label>Deductions</label>
-            <input type="number" id="form-emp-ded" placeholder="0" step="0.01" value="0" required>
-          </div>
-          <div class="form-group">
-            <label>Employment Type</label>
-            <select id="form-emp-type" required>
-              <option value="">Select</option>
-              <option value="Full-Time">Full-Time</option>
-              <option value="Part-Time">Part-Time</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select id="form-emp-status" required>
-              <option value="">Select</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Work Days</label>
-            <input type="text" id="form-emp-workdays" placeholder="e.g., Monday,Tuesday,Wednesday,Thursday,Friday" required>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Work Hours</label>
-            <input type="text" id="form-emp-workhours" placeholder="e.g., 9:00 AM - 5:00 PM" required>
-          </div>
-        </div>
-        <div class="modal-buttons">
-          <button type="button" class="button button-secondary" onclick="closeEmployeeModal()">Cancel</button>
-          <button type="submit" class="button">Save Employee</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="attendance-modal">
-    <div class="modal">
-      <h3>📅 Mark Attendance & Salary</h3>
-      <form id="attendance-form">
-        <div class="form-grid">
-          <div class="form-group form-grid-full">
-            <label>Employee ID (Type to search)</label>
-            <input type="text" id="form-att-emp-id" placeholder="Enter employee ID (e.g., EMP001)" required oninput="searchAndPopulateEmployee()">
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Employee Name (Auto-populated)</label>
-            <input type="text" id="form-att-emp-name" placeholder="Will auto-populate" readonly>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Department (Auto-populated)</label>
-            <input type="text" id="form-att-emp-dept" placeholder="Will auto-populate" readonly>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Date</label>
-            <input type="date" id="form-att-date" required>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Attendance Status</label>
-            <select id="form-att-status" required>
-              <option value="">-- Select --</option>
-              <option value="Present">Present</option>
-              <option value="Absent">Absent</option>
-              <option value="Leave">Leave</option>
-            </select>
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Salary Given (for Present)</label>
-            <input type="number" id="form-att-salary" placeholder="0" step="0.01" value="0">
-          </div>
-          <div class="form-group form-grid-full">
-            <label>Notes (optional)</label>
-            <input type="text" id="form-att-notes" placeholder="Add notes">
-          </div>
-        </div>
-        <div class="modal-buttons">
-          <button type="button" class="button button-secondary" onclick="closeAttendanceModal()">Cancel</button>
-          <button type="submit" class="button">Mark Attendance</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="confirmation-modal">
-    <div class="confirmation-modal">
-      <h3 id="confirm-title">Confirm Delete</h3>
-      <p id="confirm-message">Are you sure you want to delete this item?</p>
-      <div class="confirmation-buttons">
-        <button class="confirm-no" onclick="cancelDelete()">❌ Cancel</button>
-        <button class="confirm-yes" onclick="performDelete()">✓ Delete</button>
+   <div class="modal">
+    <h3 id="employee-modal-title">Add Employee</h3>
+    <form id="employee-form">
+     <div class="form-grid">
+      <div class="form-group form-grid-full">
+       <label>Employee ID</label> <input type="text" id="form-emp-id" placeholder="e.g., EMP001" required>
       </div>
+      <div class="form-group">
+       <label>Full Name</label> <input type="text" id="form-emp-name" placeholder="Enter name" required>
+      </div>
+      <div class="form-group">
+       <label>Email</label> <input type="email" id="form-emp-email" placeholder="Enter email" required>
+      </div>
+      <div class="form-group">
+       <label>Phone</label> <input type="tel" id="form-emp-phone" placeholder="Enter phone" required>
+      </div>
+      <div class="form-group">
+       <label>Department</label> <input type="text" id="form-emp-dept" placeholder="e.g., Engineering" required>
+      </div>
+      <div class="form-group">
+       <label>Position</label> <input type="text" id="form-emp-pos" placeholder="e.g., Developer" required>
+      </div>
+      <div class="form-group">
+       <label>Gross Salary</label> <input type="number" id="form-emp-gross" placeholder="0" step="0.01" required>
+      </div>
+      <div class="form-group">
+       <label>Deductions</label> <input type="number" id="form-emp-ded" placeholder="0" step="0.01" value="0" required>
+      </div>
+      <div class="form-group">
+       <label>Employment Type</label> <select id="form-emp-type" required> <option value="">Select</option> <option value="Full-Time">Full-Time</option> <option value="Part-Time">Part-Time</option> </select>
+      </div>
+      <div class="form-group">
+       <label>Status</label> <select id="form-emp-status" required> <option value="">Select</option> <option value="Active">Active</option> <option value="Inactive">Inactive</option> </select>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Work Days</label> <input type="text" id="form-emp-workdays" placeholder="e.g., Monday,Tuesday,Wednesday,Thursday,Friday" required>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Work Hours</label> <input type="text" id="form-emp-workhours" placeholder="e.g., 9:00 AM - 5:00 PM" required>
+      </div>
+     </div>
+     <div class="modal-buttons">
+      <button type="button" class="button button-secondary" onclick="closeEmployeeModal()">Cancel</button> <button type="submit" class="button">Save Employee</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- Mark Attendance Modal -->
+  <div class="modal-overlay" id="attendance-modal">
+   <div class="modal">
+    <h3>📅 Mark Attendance &amp; Salary</h3>
+    <form id="attendance-form">
+     <div class="form-grid">
+      <div class="form-group form-grid-full">
+       <label>Employee ID (Type to search)</label> <input type="text" id="form-att-emp-id" placeholder="Enter employee ID (e.g., EMP001)" required oninput="searchAndPopulateEmployee()">
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Employee Name (Auto-populated)</label> <input type="text" id="form-att-emp-name" placeholder="Will auto-populate" readonly>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Department (Auto-populated)</label> <input type="text" id="form-att-emp-dept" placeholder="Will auto-populate" readonly>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Date</label> <input type="date" id="form-att-date" required>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Attendance Status</label> <select id="form-att-status" required> <option value="">-- Select --</option> <option value="Present">Present</option> <option value="Absent">Absent</option> <option value="Leave">On Leave</option> </select>
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Salary Given (for Present)</label> <input type="number" id="form-att-salary" placeholder="0" step="0.01" value="0">
+      </div>
+      <div class="form-group form-grid-full">
+       <label>Notes (optional)</label> <input type="text" id="form-att-notes" placeholder="Add notes">
+      </div>
+     </div>
+     <div class="modal-buttons">
+      <button type="button" class="button button-secondary" onclick="closeAttendanceModal()">Cancel</button> <button type="submit" class="button">Mark Attendance</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- Confirmation Modal -->
+  <div class="modal-overlay" id="confirmation-modal">
+   <div class="confirmation-modal">
+    <h3 id="confirm-title">Confirm Delete</h3>
+    <p id="confirm-message">Are you sure you want to delete this item?</p>
+    <div class="confirmation-buttons">
+     <button class="confirm-no" onclick="cancelDelete()">❌ Cancel</button> <button class="confirm-yes" onclick="performDelete()">✓ Delete</button>
     </div>
+   </div>
   </div>
-
   <script>
     let allRecords = [];
     let currentUser = null;
     let currentUserRole = null;
     let editingEmployeeId = null;
     let pendingDeleteRecord = null;
-    let currentPage = 'dashboard';
 
-    const STORAGE_KEY = 'payroll_management_records';
-    const ADMIN_PASSWORD = 'admin123';
-    const EMPLOYEE_PASSWORD = '123456';
-
-    function generateId(prefix = 'REC') {
-      return prefix + '' + Date.now() + '' + Math.random().toString(36).slice(2, 9);
-    }
-
-    function saveToStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allRecords));
-    }
-
-    function loadFromStorage() {
-      try {
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        allRecords = data.filter(r => r && r.is_deleted !== true);
-      } catch (error) {
-        allRecords = [];
+    const dataHandler = {
+      onDataChanged(data) {
+        allRecords = data.filter(r => r.is_deleted !== true);
+        updateAllDisplays();
       }
-    }
+    };
 
-    function initializeApp() {
-      loadFromStorage();
-      updateAllDisplays();
+    async function initializeApp() {
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        console.error("Failed to initialize Data SDK");
+      }
     }
 
     function getEmployees() {
@@ -1213,44 +1188,11 @@
       return getEmployees().find(e => e.__backendId === id);
     }
 
-    function getEmployeeByEmployeeCode(employeeId) {
-      return getEmployees().find(e => String(e.employee_id).trim().toUpperCase() === String(employeeId).trim().toUpperCase());
-    }
-
     function getEmployeeAttendance(empId) {
-      return getAttendanceRecords().filter(a => String(a.employee_id).trim().toUpperCase() === String(empId).trim().toUpperCase());
+      return getAttendanceRecords().filter(a => a.employee_id === empId);
     }
 
-    function createRecord(data) {
-      const record = {
-        ...data,
-        __backendId: generateId(data.record_type === 'employee' ? 'EMP' : 'ATT'),
-        is_deleted: false
-      };
-      allRecords.push(record);
-      saveToStorage();
-      updateAllDisplays();
-      return { isOk: true, data: record };
-    }
-
-    function updateRecord(updatedRecord) {
-      const index = allRecords.findIndex(r => r._backendId === updatedRecord._backendId);
-      if (index === -1) return { isOk: false };
-      allRecords[index] = updatedRecord;
-      saveToStorage();
-      updateAllDisplays();
-      return { isOk: true };
-    }
-
-    function deleteRecord(recordId) {
-      const index = allRecords.findIndex(r => r.__backendId === recordId);
-      if (index === -1) return { isOk: false };
-      allRecords[index].is_deleted = true;
-      allRecords = allRecords.filter(r => r.is_deleted !== true);
-      saveToStorage();
-      updateAllDisplays();
-      return { isOk: true };
-    }
+    // ===== LOGIN SYSTEM =====
 
     function switchLoginTab(tab) {
       const adminTab = document.getElementById('admin-tab');
@@ -1275,45 +1217,39 @@
       const employees = getEmployees();
       const select = document.getElementById('employee-select');
       select.innerHTML = '<option value="">-- Choose Employee --</option>' + employees.map(e =>
-        <option value="${e.__backendId}">${escapeHtml(e.name)} (${escapeHtml(e.employee_id)})</option>
+        `<option value="${e.__backendId}">${e.name} (${e.employee_id})</option>`
       ).join('');
     }
 
-    document.getElementById('admin-login-form').addEventListener('submit', function (e) {
+    document.getElementById('admin-login-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const password = document.getElementById('admin-password').value.trim();
-
-      if (password === ADMIN_PASSWORD) {
+      const password = document.getElementById('admin-password').value;
+     
+      if (password === 'admin123') {
         loginAsAdmin();
       } else {
-        alert('❌ Invalid Admin Password');
+        alert('❌ Invalid password! Use: admin123');
         document.getElementById('admin-password').value = '';
       }
     });
 
-    document.getElementById('employee-login-form').addEventListener('submit', function (e) {
+    document.getElementById('employee-login-form').addEventListener('submit', (e) => {
       e.preventDefault();
-
+     
       const empId = document.getElementById('employee-select').value;
-      const password = document.getElementById('employee-password').value.trim();
+      const empName = document.getElementById('employee-name').value.trim();
 
       if (!empId) {
         alert('Please select an employee');
         return;
       }
 
-      if (!password) {
-        alert('Please enter employee password');
+      if (!empName) {
+        alert('Please enter your name');
         return;
       }
 
-      if (password !== EMPLOYEE_PASSWORD) {
-        alert('❌ Wrong Password');
-        document.getElementById('employee-password').value = '';
-        return;
-      }
-
-      loginAsEmployee(empId);
+      loginAsEmployee(empId, empName);
     });
 
     function loginAsAdmin() {
@@ -1329,8 +1265,8 @@
       showAdminPage('dashboard');
     }
 
-    function loginAsEmployee(empBackendId) {
-      const employee = getEmployeeById(empBackendId);
+    function loginAsEmployee(empId, empName) {
+      const employee = getEmployeeById(empId);
       if (!employee) {
         alert('Employee not found');
         return;
@@ -1341,7 +1277,7 @@
 
       document.getElementById('login-page').style.display = 'none';
       document.getElementById('dashboard-page').style.display = 'flex';
-      document.getElementById('current-user').textContent = employee.name;
+      document.getElementById('current-user').textContent = empName;
       document.getElementById('user-role-label').textContent = '👤 Employee';
 
       setupEmployeeNav();
@@ -1351,24 +1287,23 @@
     function setupAdminNav() {
       const navMenu = document.getElementById('nav-menu');
       navMenu.innerHTML = `
-        <li class="nav-item"><button class="nav-link" id="nav-dashboard" onclick="showAdminPage('dashboard')">📊 Dashboard</button></li>
-        <li class="nav-item"><button class="nav-link" id="nav-employees" onclick="showAdminPage('employees')">👥 Employees</button></li>
-        <li class="nav-item"><button class="nav-link" id="nav-attendance" onclick="showAdminPage('attendance')">📅 Attendance</button></li>
-        <li class="nav-item"><button class="nav-link" id="nav-payroll" onclick="showAdminPage('payroll')">💰 Payroll</button></li>
+        <li class="nav-item"><button class="nav-link active" onclick="showAdminPage('dashboard')">📊 Dashboard</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showAdminPage('employees')">👥 Employees</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showAdminPage('attendance')">📅 Attendance</button></li>
+        <li class="nav-item"><button class="nav-link" onclick="showAdminPage('payroll')">💰 Payroll</button></li>
       `;
     }
 
     function setupEmployeeNav() {
       const navMenu = document.getElementById('nav-menu');
       navMenu.innerHTML = `
-        <li class="nav-item"><button class="nav-link" id="nav-dashboard" onclick="showEmployeePage('dashboard')">📋 My Dashboard</button></li>
+        <li class="nav-item"><button class="nav-link active" onclick="showEmployeePage('dashboard')">📋 My Dashboard</button></li>
       `;
     }
 
     function showAdminPage(page) {
-      currentPage = page;
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
+     
       if (page === 'dashboard') {
         document.getElementById('admin-dashboard').classList.add('active');
         updateAdminDashboard();
@@ -1387,9 +1322,8 @@
     }
 
     function showEmployeePage(page) {
-      currentPage = page;
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
+     
       if (page === 'dashboard') {
         document.getElementById('employee-dashboard').classList.add('active');
         updateEmployeeDashboard();
@@ -1400,48 +1334,46 @@
 
     function updateNavActive(page) {
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-      const nav = document.getElementById(nav-${page});
-      if (nav) nav.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
     }
 
     function logout() {
       currentUser = null;
       currentUserRole = null;
-      currentPage = 'dashboard';
 
       document.getElementById('login-page').style.display = 'flex';
       document.getElementById('dashboard-page').style.display = 'none';
 
       document.getElementById('admin-login-form').reset();
       document.getElementById('employee-login-form').reset();
-      switchLoginTab('admin');
     }
 
-    function updateAllDisplays() {
-      populateEmployeeSelect();
+    // ===== ADMIN FUNCTIONS =====
 
+    function updateAllDisplays() {
       if (currentUserRole === 'admin') {
         updateAdminDashboard();
         updateAdminEmployeesList();
         updateAdminAttendance();
         updateAdminPayroll();
       } else if (currentUserRole === 'employee') {
-        const freshUser = currentUser ? getEmployeeById(currentUser.__backendId) : null;
-        if (freshUser) currentUser = freshUser;
         updateEmployeeDashboard();
       }
+      populateEmployeeSelect();
     }
 
     function updateAdminDashboard() {
       const employees = getEmployees();
-      const totalGross = employees.reduce((sum, e) => sum + Number(e.gross_salary || 0), 0);
-      const totalDed = employees.reduce((sum, e) => sum + Number(e.deductions || 0), 0);
+      const totalGross = employees.reduce((sum, e) => sum + (e.gross_salary || 0), 0);
+      const totalDed = employees.reduce((sum, e) => sum + (e.deductions || 0), 0);
       const netAmount = totalGross - totalDed;
 
       document.getElementById('total-employees').textContent = employees.length;
-      document.getElementById('total-payroll').textContent = formatCurrency(totalGross);
-      document.getElementById('total-deductions').textContent = formatCurrency(totalDed);
-      document.getElementById('net-amount').textContent = formatCurrency(netAmount);
+      document.getElementById('total-payroll').textContent = '₹' + totalGross.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      document.getElementById('total-deductions').textContent = '₹' + totalDed.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      document.getElementById('net-amount').textContent = '₹' + netAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
 
       const emptyState = document.getElementById('dashboard-empty');
       const table = document.getElementById('dashboard-table');
@@ -1455,14 +1387,14 @@
         table.style.display = 'block';
         tbody.innerHTML = employees.map(emp => `
           <tr>
-            <td>${escapeHtml(emp.employee_id)}</td>
-            <td>${escapeHtml(emp.name)}</td>
-            <td>${escapeHtml(emp.department)}</td>
-            <td>${escapeHtml(emp.position)}</td>
-            <td>${formatCurrency(emp.gross_salary)} / ${formatCurrency(Number(emp.gross_salary || 0) / 12)}</td>
-            <td>${formatCurrency(emp.deductions)}</td>
-            <td>${formatCurrency(Number(emp.gross_salary || 0) - Number(emp.deductions || 0))}</td>
-            <td><span class="status-badge ${emp.status === 'Active' ? 'status-active' : 'status-inactive'}">${escapeHtml(emp.status)}</span></td>
+            <td>${emp.employee_id}</td>
+            <td>${emp.name}</td>
+            <td>${emp.department}</td>
+            <td>${emp.position}</td>
+            <td>₹${emp.gross_salary.toLocaleString('en-IN', {maximumFractionDigits: 2})} / ₹${(emp.gross_salary / 12).toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+            <td>₹${emp.deductions.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+            <td>₹${(emp.gross_salary - emp.deductions).toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+            <td><span class="status-badge ${emp.status === 'Active' ? 'status-active' : 'status-inactive'}">${emp.status}</span></td>
           </tr>
         `).join('');
       }
@@ -1481,20 +1413,17 @@
         container.innerHTML = employees.map(emp => `
           <div class="employee-card">
             <div class="employee-info">
-              <div class="employee-info-item"><span class="employee-info-label">ID:</span> ${escapeHtml(emp.employee_id)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Name:</span> ${escapeHtml(emp.name)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Email:</span> ${escapeHtml(emp.email)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Phone:</span> ${escapeHtml(emp.phone)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Department:</span> ${escapeHtml(emp.department)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Position:</span> ${escapeHtml(emp.position)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Annual Salary:</span> ${formatCurrency(emp.gross_salary)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Monthly Salary:</span> ${formatCurrency(Number(emp.gross_salary || 0) / 12)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Type:</span> ${escapeHtml(emp.employment_type)}</div>
-              <div class="employee-info-item"><span class="employee-info-label">Status:</span> ${escapeHtml(emp.status)}</div>
+              <div class="employee-info-item"><span class="employee-info-label">ID:</span> ${emp.employee_id}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Name:</span> ${emp.name}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Email:</span> ${emp.email}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Department:</span> ${emp.department}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Position:</span> ${emp.position}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Annual Salary:</span> ₹${emp.gross_salary.toLocaleString('en-IN', {maximumFractionDigits: 2})}</div>
+              <div class="employee-info-item"><span class="employee-info-label">Monthly Salary:</span> ₹${(emp.gross_salary / 12).toLocaleString('en-IN', {maximumFractionDigits: 2})}</div>
             </div>
             <div class="employee-actions">
               <button class="button button-small" onclick="editEmployee('${emp.__backendId}')">Edit</button>
-              <button class="button button-small button-danger" onclick="showDeleteConfirmation('employee', '${emp.__backendId}', '${escapeJsString(emp.name)}')">Delete</button>
+              <button class="button button-small button-danger" onclick="showDeleteConfirmation('employee', '${emp.__backendId}', '${emp.name}')">Delete</button>
             </div>
           </div>
         `).join('');
@@ -1502,7 +1431,7 @@
     }
 
     function updateAdminAttendance() {
-      const attendance = getAttendanceRecords().sort((a, b) => new Date(b.attendance_date) - new Date(a.attendance_date));
+      const attendance = getAttendanceRecords();
       const container = document.getElementById('attendance-list');
       const emptyState = document.getElementById('attendance-empty');
 
@@ -1514,17 +1443,17 @@
         container.innerHTML = attendance.map(att => `
           <div class="attendance-card">
             <div class="attendance-card-header">
-              <span class="attendance-card-name">${escapeHtml(att.name)} (${formatDate(att.attendance_date)})</span>
-              <span class="status-badge status-${String(att.attendance_status || '').toLowerCase()}">${escapeHtml(att.attendance_status)}</span>
+              <span class="attendance-card-name">${att.name} (${new Date(att.attendance_date).toLocaleDateString()})</span>
+              <span class="status-badge status-${att.attendance_status.toLowerCase()}">${att.attendance_status}</span>
             </div>
             <div class="attendance-card-details">
-              <div><strong>Employee ID:</strong> ${escapeHtml(att.employee_id)}</div>
-              <div><strong>Department:</strong> ${escapeHtml(att.department)}</div>
-              <div><strong>Salary Given:</strong> ${formatCurrency(att.salary_given || 0)}</div>
-              ${att.notes ? <div style="grid-column: 1/-1;"><strong>Notes:</strong> ${escapeHtml(att.notes)}</div> : ''}
+              <div><strong>Employee ID:</strong> ${att.employee_id}</div>
+              <div><strong>Department:</strong> ${att.department}</div>
+              <div><strong>Salary Given:</strong> ₹${(att.salary_given || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}</div>
+              ${att.notes ? `<div style="grid-column: 1/-1;"><strong>Notes:</strong> ${att.notes}</div>` : ''}
             </div>
             <div style="margin-top: 15px;">
-              <button class="button button-small button-danger" onclick="showDeleteConfirmation('attendance', '${att.__backendId}', '${escapeJsString(att.name)}')">Delete</button>
+              <button class="button button-small button-danger" onclick="showDeleteConfirmation('attendance', '${att.__backendId}', '${att.name}')">Delete</button>
             </div>
           </div>
         `).join('');
@@ -1547,13 +1476,13 @@
 
     function updateAdminPayroll() {
       const employees = getEmployees();
-      const totalGross = employees.reduce((sum, e) => sum + Number(e.gross_salary || 0), 0);
-      const totalDed = employees.reduce((sum, e) => sum + Number(e.deductions || 0), 0);
+      const totalGross = employees.reduce((sum, e) => sum + (e.gross_salary || 0), 0);
+      const totalDed = employees.reduce((sum, e) => sum + (e.deductions || 0), 0);
       const netAmount = totalGross - totalDed;
 
-      document.getElementById('payroll-gross').textContent = formatCurrency(totalGross);
-      document.getElementById('payroll-deductions').textContent = formatCurrency(totalDed);
-      document.getElementById('payroll-net').textContent = formatCurrency(netAmount);
+      document.getElementById('payroll-gross').textContent = '₹' + totalGross.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      document.getElementById('payroll-deductions').textContent = '₹' + totalDed.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      document.getElementById('payroll-net').textContent = '₹' + netAmount.toLocaleString('en-IN', {maximumFractionDigits: 2});
       document.getElementById('payroll-count').textContent = employees.length;
 
       const emptyState = document.getElementById('payroll-empty');
@@ -1568,31 +1497,33 @@
         table.style.display = 'block';
         tbody.innerHTML = employees.map(emp => `
           <tr>
-            <td>${escapeHtml(emp.name)}</td>
-            <td>${escapeHtml(emp.department)}</td>
-            <td>${formatCurrency(emp.gross_salary)} / ${formatCurrency(Number(emp.gross_salary || 0) / 12)}</td>
-            <td>${formatCurrency(emp.deductions)}</td>
-            <td>${formatCurrency(Number(emp.gross_salary || 0) - Number(emp.deductions || 0))}</td>
+            <td>${emp.name}</td>
+            <td>${emp.department}</td>
+            <td>₹${emp.gross_salary.toLocaleString('en-IN', {maximumFractionDigits: 2})} / ₹${(emp.gross_salary / 12).toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+            <td>₹${emp.deductions.toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
+            <td>₹${(emp.gross_salary - emp.deductions).toLocaleString('en-IN', {maximumFractionDigits: 2})}</td>
           </tr>
         `).join('');
       }
     }
 
+    // ===== EMPLOYEE FUNCTIONS =====
+
     function updateEmployeeDashboard() {
       if (!currentUser || currentUserRole !== 'employee') return;
 
-      document.getElementById('emp-name-display').textContent = currentUser.name || '-';
-      document.getElementById('emp-id-display').textContent = currentUser.employee_id || '-';
-      document.getElementById('emp-dept-display').textContent = currentUser.department || '-';
-      document.getElementById('emp-pos-display').textContent = currentUser.position || '-';
-      document.getElementById('emp-status-display').textContent = currentUser.status || '-';
+      document.getElementById('emp-name-display').textContent = currentUser.name;
+      document.getElementById('emp-id-display').textContent = currentUser.employee_id;
+      document.getElementById('emp-dept-display').textContent = currentUser.department;
+      document.getElementById('emp-pos-display').textContent = currentUser.position;
+      document.getElementById('emp-status-display').textContent = currentUser.status;
 
-      document.getElementById('emp-gross-display').textContent = formatCurrency(currentUser.gross_salary || 0);
-      document.getElementById('emp-deductions-display').textContent = formatCurrency(currentUser.deductions || 0);
-      const netSalary = Number(currentUser.gross_salary || 0) - Number(currentUser.deductions || 0);
-      document.getElementById('emp-net-display').textContent = formatCurrency(netSalary);
+      document.getElementById('emp-gross-display').textContent = '₹' + currentUser.gross_salary.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      document.getElementById('emp-deductions-display').textContent = '₹' + currentUser.deductions.toLocaleString('en-IN', {maximumFractionDigits: 2});
+      const netSalary = currentUser.gross_salary - currentUser.deductions;
+      document.getElementById('emp-net-display').textContent = '₹' + netSalary.toLocaleString('en-IN', {maximumFractionDigits: 2});
 
-      const empAttendance = getEmployeeAttendance(currentUser.employee_id).sort((a, b) => new Date(b.attendance_date) - new Date(a.attendance_date));
+      const empAttendance = getEmployeeAttendance(currentUser.employee_id);
       const presentDays = empAttendance.filter(a => a.attendance_status === 'Present').length;
       document.getElementById('emp-present-display').textContent = presentDays;
 
@@ -1607,18 +1538,20 @@
         container.innerHTML = empAttendance.map(att => `
           <div class="attendance-card">
             <div class="attendance-card-header">
-              <span class="attendance-card-name">${formatDate(att.attendance_date)}</span>
-              <span class="status-badge status-${String(att.attendance_status || '').toLowerCase()}">${escapeHtml(att.attendance_status)}</span>
+              <span class="attendance-card-name">${new Date(att.attendance_date).toLocaleDateString()}</span>
+              <span class="status-badge status-${att.attendance_status.toLowerCase()}">${att.attendance_status}</span>
             </div>
             <div class="attendance-card-details">
-              <div><strong>Status:</strong> ${escapeHtml(att.attendance_status)}</div>
-              <div><strong>Salary Given:</strong> ${formatCurrency(att.salary_given || 0)}</div>
-              ${att.notes ? <div style="grid-column: 1/-1;"><strong>Notes:</strong> ${escapeHtml(att.notes)}</div> : ''}
+              <div><strong>Status:</strong> ${att.attendance_status}</div>
+              <div><strong>Salary Given:</strong> ₹${(att.salary_given || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}</div>
+              ${att.notes ? `<div style="grid-column: 1/-1;"><strong>Notes:</strong> ${att.notes}</div>` : ''}
             </div>
           </div>
         `).join('');
       }
     }
+
+    // ===== MODAL FUNCTIONS =====
 
     function openAddEmployeeModal() {
       editingEmployeeId = null;
@@ -1632,8 +1565,8 @@
     }
 
     function openMarkAttendanceModal() {
+      document.getElementById('form-att-date').valueAsDate = new Date();
       document.getElementById('attendance-form').reset();
-      document.getElementById('form-att-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('attendance-modal').classList.add('active');
     }
 
@@ -1643,7 +1576,8 @@
 
     function searchAndPopulateEmployee() {
       const empId = document.getElementById('form-att-emp-id').value.trim().toUpperCase();
-      const employee = getEmployeeByEmployeeCode(empId);
+      const employees = getEmployees();
+      const employee = employees.find(e => e.employee_id.toUpperCase() === empId);
 
       if (employee) {
         document.getElementById('form-att-emp-name').value = employee.name;
@@ -1654,24 +1588,24 @@
       }
     }
 
-    function editEmployee(id) {
+    async function editEmployee(id) {
       const employee = getEmployeeById(id);
       if (!employee) return;
 
       editingEmployeeId = id;
       document.getElementById('employee-modal-title').textContent = 'Edit Employee';
-      document.getElementById('form-emp-id').value = employee.employee_id || '';
-      document.getElementById('form-emp-name').value = employee.name || '';
-      document.getElementById('form-emp-email').value = employee.email || '';
-      document.getElementById('form-emp-phone').value = employee.phone || '';
-      document.getElementById('form-emp-dept').value = employee.department || '';
-      document.getElementById('form-emp-pos').value = employee.position || '';
-      document.getElementById('form-emp-gross').value = employee.gross_salary || '';
-      document.getElementById('form-emp-ded').value = employee.deductions || 0;
-      document.getElementById('form-emp-type').value = employee.employment_type || '';
-      document.getElementById('form-emp-status').value = employee.status || '';
-      document.getElementById('form-emp-workdays').value = employee.work_days || '';
-      document.getElementById('form-emp-workhours').value = employee.work_hours || '';
+      document.getElementById('form-emp-id').value = employee.employee_id;
+      document.getElementById('form-emp-name').value = employee.name;
+      document.getElementById('form-emp-email').value = employee.email;
+      document.getElementById('form-emp-phone').value = employee.phone;
+      document.getElementById('form-emp-dept').value = employee.department;
+      document.getElementById('form-emp-pos').value = employee.position;
+      document.getElementById('form-emp-gross').value = employee.gross_salary;
+      document.getElementById('form-emp-ded').value = employee.deductions;
+      document.getElementById('form-emp-type').value = employee.employment_type;
+      document.getElementById('form-emp-status').value = employee.status;
+      document.getElementById('form-emp-workdays').value = employee.work_days;
+      document.getElementById('form-emp-workhours').value = employee.work_hours;
 
       document.getElementById('employee-modal').classList.add('active');
     }
@@ -1683,10 +1617,10 @@
 
       if (type === 'employee') {
         confirmTitle.textContent = 'Delete Employee';
-        confirmMessage.textContent = Are you sure you want to delete employee "${itemName}"? This action cannot be undone.;
+        confirmMessage.textContent = `Are you sure you want to delete employee "${itemName}"? This action cannot be undone.`;
       } else {
         confirmTitle.textContent = 'Delete Attendance Record';
-        confirmMessage.textContent = Are you sure you want to delete this attendance record for "${itemName}"? This action cannot be undone.;
+        confirmMessage.textContent = `Are you sure you want to delete this attendance record for "${itemName}"? This action cannot be undone.`;
       }
 
       document.getElementById('confirmation-modal').classList.add('active');
@@ -1697,10 +1631,20 @@
       document.getElementById('confirmation-modal').classList.remove('active');
     }
 
-    function performDelete() {
+    async function performDelete() {
       if (!pendingDeleteRecord) return;
 
-      const result = deleteRecord(pendingDeleteRecord.recordId);
+      const { type, recordId } = pendingDeleteRecord;
+      const record = allRecords.find(r => r.__backendId === recordId);
+
+      if (!record) {
+        alert('Record not found');
+        cancelDelete();
+        return;
+      }
+
+      const updatedRecord = { ...record, is_deleted: true };
+      const result = await window.dataSdk.update(updatedRecord);
 
       if (!result.isOk) {
         alert('❌ Failed to delete. Please try again.');
@@ -1709,43 +1653,34 @@
       }
     }
 
-    document.getElementById('employee-form').addEventListener('submit', function (e) {
+    // ===== FORMS =====
+
+    document.getElementById('employee-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const employeeCode = document.getElementById('form-emp-id').value.trim();
-      const duplicate = getEmployees().find(emp =>
-        emp.employee_id.trim().toUpperCase() === employeeCode.toUpperCase() &&
-        emp.__backendId !== editingEmployeeId
-      );
-
-      if (duplicate) {
-        alert('❌ Employee ID already exists');
-        return;
-      }
 
       const employeeData = {
         record_type: 'employee',
-        employee_id: employeeCode,
-        name: document.getElementById('form-emp-name').value.trim(),
-        email: document.getElementById('form-emp-email').value.trim(),
-        phone: document.getElementById('form-emp-phone').value.trim(),
-        department: document.getElementById('form-emp-dept').value.trim(),
-        position: document.getElementById('form-emp-pos').value.trim(),
-        gross_salary: parseFloat(document.getElementById('form-emp-gross').value) || 0,
-        deductions: parseFloat(document.getElementById('form-emp-ded').value) || 0,
+        employee_id: document.getElementById('form-emp-id').value,
+        name: document.getElementById('form-emp-name').value,
+        email: document.getElementById('form-emp-email').value,
+        phone: document.getElementById('form-emp-phone').value,
+        department: document.getElementById('form-emp-dept').value,
+        position: document.getElementById('form-emp-pos').value,
+        gross_salary: parseFloat(document.getElementById('form-emp-gross').value),
+        deductions: parseFloat(document.getElementById('form-emp-ded').value),
         employment_type: document.getElementById('form-emp-type').value,
         status: document.getElementById('form-emp-status').value,
-        work_days: document.getElementById('form-emp-workdays').value.trim(),
-        work_hours: document.getElementById('form-emp-workhours').value.trim(),
+        work_days: document.getElementById('form-emp-workdays').value,
+        work_hours: document.getElementById('form-emp-workhours').value,
         is_deleted: false
       };
 
       let result;
       if (editingEmployeeId) {
         const employee = getEmployeeById(editingEmployeeId);
-        result = updateRecord({ ...employee, ...employeeData, _backendId: employee._backendId });
+        result = await window.dataSdk.update({ ...employee, ...employeeData });
       } else {
-        result = createRecord(employeeData);
+        result = await window.dataSdk.create(employeeData);
       }
 
       if (!result.isOk) {
@@ -1755,30 +1690,22 @@
       }
     });
 
-    document.getElementById('attendance-form').addEventListener('submit', function (e) {
+    document.getElementById('attendance-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const employeeId = document.getElementById('form-att-emp-id').value.trim();
-      const employee = getEmployeeByEmployeeCode(employeeId);
-
-      if (!employee) {
-        alert('❌ Employee ID not found');
-        return;
-      }
 
       const attendanceData = {
         record_type: 'attendance',
-        employee_id: employee.employee_id,
-        name: employee.name,
-        department: employee.department,
+        employee_id: document.getElementById('form-att-emp-id').value,
+        name: document.getElementById('form-att-emp-name').value,
+        department: document.getElementById('form-att-emp-dept').value,
         attendance_date: document.getElementById('form-att-date').value,
         attendance_status: document.getElementById('form-att-status').value,
         salary_given: parseFloat(document.getElementById('form-att-salary').value) || 0,
-        notes: document.getElementById('form-att-notes').value.trim(),
+        notes: document.getElementById('form-att-notes').value,
         is_deleted: false
       };
 
-      const result = createRecord(attendanceData);
+      const result = await window.dataSdk.create(attendanceData);
       if (!result.isOk) {
         alert('❌ Error marking attendance');
       } else {
@@ -1786,8 +1713,10 @@
       }
     });
 
+    // ===== MODAL CLOSE ON OVERLAY CLICK =====
+
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', function (e) {
+      overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           overlay.classList.remove('active');
           if (overlay.id === 'confirmation-modal') {
@@ -1797,35 +1726,42 @@
       });
     });
 
-    function formatCurrency(value) {
-      return '₹' + Number(value || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    // ===== ELEMENT SDK =====
+
+    const defaultConfig = {
+      company_name: 'PayRoll Systems Inc.',
+      admin_name: 'System Admin'
+    };
+
+    const element = {
+      defaultConfig,
+      async onConfigChange(config) {
+        // Handle config updates
+      },
+      mapToCapabilities(config) {
+        return {
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        };
+      },
+      mapToEditPanelValues(config) {
+        return new Map([
+          ['company_name', config.company_name || defaultConfig.company_name],
+          ['admin_name', config.admin_name || defaultConfig.admin_name]
+        ]);
+      }
+    };
+
+    if (window.elementSdk) {
+      window.elementSdk.init(element);
     }
 
-    function formatDate(value) {
-      if (!value) return '-';
-      const date = new Date(value);
-      if (isNaN(date.getTime())) return value;
-      return date.toLocaleDateString('en-IN');
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function escapeJsString(value) {
-      return String(value ?? '')
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '\\"');
-    }
+    // ===== INITIALIZE =====
 
     initializeApp();
     populateEmployeeSelect();
   </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dbb9e4432979a55',t:'MTc3MzQxMDk4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
